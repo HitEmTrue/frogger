@@ -282,6 +282,12 @@ SDL_AppResult Game::AppInit() {
         return SDL_APP_FAILURE;
     }
 
+    std::filesystem::path fullSpritesPath = spritesDirectory;
+    fullSpritesPath /= "frogger.png";
+
+    std::string spritesPath = fullSpritesPath.string();
+    SDL_Surface *tmpSurface = SDL_LoadPNG(spritesPath.c_str());
+
 
     drawRect.w = drawRect.h = TILE_SIZE;
     srand(time(NULL));

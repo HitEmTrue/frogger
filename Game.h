@@ -4,6 +4,7 @@
 #include <SDL3/SDL_pixels.h>
 #include <SDL3/SDL_render.h>
 #include <SDL3/SDL_scancode.h>
+#include <SDL3/SDL_surface.h>
 #include <SDL3_ttf/SDL_textengine.h>
 #include <SDL3_ttf/SDL_ttf.h>
 
@@ -34,6 +35,7 @@ class Game {
     TTF_Font *font;
 
     static constexpr const char* fontDirectory = "assets/fonts/";
+    static constexpr const char* spritesDirectory = "assets/sprites/";
     static constexpr const char* fontBitCountGridDouble = "BitcountGridDoubleInk-VariableFont_CRSV,ELSH,ELXP,SZP1,SZP2,XPN1,XPN2,YPN1,YPN2,slnt,wght.ttf";
     static constexpr const char* fontBitcountSingle = "BitcountSingle-VariableFont_CRSV,ELSH,ELXP,slnt,wght.ttf";
     static constexpr const char* fontSixtyfourConvergence = "SixtyfourConvergence-Regular-VariableFont_BLED,SCAN,XELA,YELA.ttf";
@@ -44,6 +46,7 @@ class Game {
     SDL_Texture *textureYouWon;
     SDL_Texture *textureYouLost;
     SDL_Texture *textureSnakeLength;
+    SDL_Texture *textureSpriteSheet;
 
     static constexpr int WINDOW_WIDTH = 640;
     static constexpr int WINDOW_HEIGHT = 480;
