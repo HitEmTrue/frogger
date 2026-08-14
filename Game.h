@@ -45,14 +45,17 @@ class Game {
     SDL_Texture *textureGamePaused;
     SDL_Texture *textureYouWon;
     SDL_Texture *textureYouLost;
-    SDL_Texture *textureSnakeLength;
+    SDL_Texture *textureScore;
     SDL_Texture *textureSpriteSheet;
 
-    static constexpr int WINDOW_WIDTH = 640;
-    static constexpr int WINDOW_HEIGHT = 480;
-    static constexpr int TILE_SIZE = 20;
+
+//  Frog can go 14 columns x 13 rows (896 x 832 px required at 1024 x 768)
+    static constexpr int WINDOW_WIDTH = 896;
+    static constexpr int WINDOW_HEIGHT = 1024;
+    static constexpr int TILE_SIZE = 64;
     
-    static constexpr int SCOREBOARD_HEIGHT = 60;
+    static constexpr int SCOREBOARD_HEIGHT = 128;
+    static constexpr int HEADER_HEIGHT = 64;
     int BOARD_WIDTH_TILES;
     int BOARD_HEIGHT_TILES;
 
@@ -88,6 +91,8 @@ class Game {
         void ShowYouLost();
         
         void RenderScoreboard();
+
+        void RenderFrog(int frame);
 
         void DrawCircle(int32_t game_x, int32_t game_y,
                         bool filled, int32_t diameter);

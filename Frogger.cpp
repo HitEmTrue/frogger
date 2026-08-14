@@ -21,6 +21,8 @@ Frogger::Frogger(Game& game)
     capacity(0),
     mGame(game)
 {
+    position.x = 6;
+    position.y = 12;
 }
 
 Frogger::~Frogger() {
@@ -33,6 +35,11 @@ void Frogger::Reset(SDL_Point point) {
     direction = rand()%4;
 }
 
+SDL_Point Frogger::Position() {
+    return position;
+}
+
+
 int Frogger::GetDirection() {
     return direction;
 }
@@ -41,11 +48,34 @@ size_t Frogger::Size() {
     return size;
 }
 
-void Frogger::SetDirection(int newDirection) {
-    direction = newDirection;
+void Frogger::Move(int mDirection) {
+    switch (mDirection) {
+        case (UP):
+            if (position.y > 0) {
+                position.y--;
+            }
+            break;
+        case (DOWN):
+            if (position.y < 12) {
+                position.y++;
+            }
+            break;
+        case (RIGHT):
+            if (position.x < 13) {
+                position.x++;
+            }
+            break;
+        case (LEFT):
+            if (position.x > 0) {
+                position.x--;
+            }
+            break;
+        default:
+            break;
+    }
+
+    direction = mDirection;
 }
-
-
 
 bool Frogger::ContainsPoint(SDL_Point point ) {
     bool rValue = false;

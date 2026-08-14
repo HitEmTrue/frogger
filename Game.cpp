@@ -76,10 +76,10 @@ void Game::ComposeScoreboardText() {
 
     text = TTF_RenderText_Blended(font, banner.c_str(), 0, color); 
     if (text) {
-        textureSnakeLength = SDL_CreateTextureFromSurface(renderer, text);
+        textureScore = SDL_CreateTextureFromSurface(renderer, text);
         SDL_DestroySurface(text);
     }
-    if (!textureSnakeLength) {
+    if (!textureScore) {
         SDL_Log("Couldn't create text: %s\n", SDL_GetError());
     }
 }
@@ -149,14 +149,41 @@ void Game::RenderScoreboard() {
 
     SDL_GetRenderOutputSize(renderer, &w, &h);
     SDL_SetRenderScale(renderer, scale, scale);
-    SDL_GetTextureSize(textureSnakeLength, &dst.w, &dst.h);
+    SDL_GetTextureSize(textureScore, &dst.w, &dst.h);
 
     /* Draw the text */
     SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
     //            SDL_RenderClear(renderer);
-    SDL_RenderTexture(renderer, textureSnakeLength, NULL, &dst);
+    SDL_RenderTexture(renderer, textureScore, NULL, &dst);
 }
 
+
+void Game::RenderFrog(int frame) {
+
+    //TODO check bounds on frame
+
+    std::string debug = std::format("Frog x: {} y: {} HEADER_HEIGHT: {}\n",
+            mFrogger.Position().x, mFrogger.Position().y, HEADER_HEIGHT);
+    printf("%s",debug.c_str());
+
+    SDL_FRect mPortion;
+    mPortion.x = 0 + frame*16;
+    mPortion.y = 0;
+    mPortion.h = 16;
+    mPortion.w = 16;
+
+//    const float scale = 4.0f;
+
+    SDL_FRect dst;
+    dst.x = 0 + (mFrogger.Position().x * TILE_SIZE);
+    dst.y = HEADER_HEIGHT + (mFrogger.Position().y * TILE_SIZE);
+    dst.h = TILE_SIZE;
+    dst.w = TILE_SIZE;
+
+    SDL_RenderTexture(renderer, textureSpriteSheet, &mPortion, &dst);
+    
+
+}
 
 
 void Game::DrawCircle(int32_t game_x, int32_t game_y,
@@ -287,6 +314,18 @@ SDL_AppResult Game::AppInit() {
 
     std::string spritesPath = fullSpritesPath.string();
     SDL_Surface *tmpSurface = SDL_LoadPNG(spritesPath.c_str());
+    if (tmpSurface) {
+        textureSpriteSheet = SDL_CreateTextureFromSurface(renderer, tmpSurface);
+        SDL_DestroySurface(tmpSurface);
+    }
+    if (!textureSpriteSheet) {
+        SDL_Log("Couldn't create texture: %s\n", SDL_GetError());
+        return SDL_APP_FAILURE;
+    }
+        
+    
+
+
 
 
     drawRect.w = drawRect.h = TILE_SIZE;
@@ -321,19 +360,19 @@ SDL_AppResult Game::handleAppEvent(void *, SDL_Event *event) {
                     break;
                 case SDL_SCANCODE_W:
                 case SDL_SCANCODE_UP:
-                    mFrogger.SetDirection(UP);
+                    mFrogger.Move(UP);
                     break;
                 case SDL_SCANCODE_S:
                 case SDL_SCANCODE_DOWN:
-                    mFrogger.SetDirection(DOWN);
+                    mFrogger.Move(DOWN);
                     break;
                 case SDL_SCANCODE_A:
                 case SDL_SCANCODE_LEFT:
-                    mFrogger.SetDirection(LEFT);
+                    mFrogger.Move(LEFT);
                     break;
                 case SDL_SCANCODE_D:
                 case SDL_SCANCODE_RIGHT:
-                    mFrogger.SetDirection(RIGHT);
+                    mFrogger.Move(RIGHT);
                     break;
                 case SDL_SCANCODE_E:
                     resetGame();
@@ -368,15 +407,16 @@ SDL_AppResult Game::Iterate(void *) {
                 SDL_RenderFillRect(renderer, &drawRect);
             }
 
+            RenderFrog(3);
 
             if (isPaused) {
                 ShowPaused();
             }
-            if (isGameLost) {
+           if (isGameLost) {
                 ShowYouLost();
             }
 
-            RenderScoreboard();
+//            RenderScoreboard();
 
             SDL_RenderPresent(renderer);
 
@@ -385,7 +425,7 @@ SDL_AppResult Game::Iterate(void *) {
                 printf("You won!\n");
                 resetGame();
             }
-            SDL_Delay(90);
+            SDL_Delay(50);
             return SDL_APP_CONTINUE;
 }
 
