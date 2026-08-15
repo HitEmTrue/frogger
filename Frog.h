@@ -13,7 +13,7 @@ class Game;
 using namespace std;
 
 
-class Frogger {
+class Frog {
     size_t size;
     int direction;
     size_t capacity;
@@ -24,13 +24,13 @@ class Frogger {
     Game& mGame;
 
     public:
-        Frogger(Game& game); 
+        Frog(Game& game); 
 
-        ~Frogger();
+        ~Frog();
 
         int movingFrame;
 
-        void Reset(SDL_Point point); 
+        void Reset(); 
         
         SDL_Point Position();
 
@@ -50,7 +50,7 @@ class Frogger {
 
         void Move(int mDirection);
 
-        bool ContainsPoint(SDL_Point point );
+//        bool ContainsPoint(SDL_Point point );
 
 
 }; 

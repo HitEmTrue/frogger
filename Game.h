@@ -16,13 +16,13 @@
 #include <filesystem>
 #include <format>
 
-#include "Frogger.h"
+#include "Frog.h"
 #include "Food.h"
 
 using namespace std;
 
 class Game {
-    Frogger mFrogger;
+    Frog mFrog;
     Food mFood;
     bool isPaused;
     bool isGameLost;
@@ -92,7 +92,7 @@ class Game {
         
         void RenderScoreboard();
 
-        void RenderFrog(int frame);
+        void RenderFrog();
 
         void DrawCircle(int32_t game_x, int32_t game_y,
                         bool filled, int32_t diameter);

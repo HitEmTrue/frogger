@@ -10,10 +10,10 @@
 #define RIGHT 3
 
 #include "Game.h"
-#include "Frogger.h"
+#include "Frog.h"
 
 Game::Game()
-            : mFrogger(*this),
+            : mFrog(*this),
             isPaused(false),
             isGameLost(false),
             score(0),
@@ -36,7 +36,7 @@ void Game::resetGame() {
     score = 0;
     mFood.Reset();
 
-    mFrogger.Reset(randomTile());
+    mFrog.Reset();
 }
 
 void Game::handleGameLost() {
@@ -139,7 +139,7 @@ void Game::RenderScoreboard() {
 }
 
 
-void Game::RenderFrog(int frame) {
+void Game::RenderFrog() {
 
     //TODO check bounds on frame
 
@@ -159,14 +159,14 @@ void Game::RenderFrog(int frame) {
     mPortion.w = 16;
 
     SDL_FRect dst;
-    dst.x = 0 + (mFrogger.Position().x * TILE_SIZE);
-    dst.y = HEADER_HEIGHT + (mFrogger.Position().y * TILE_SIZE);
+    dst.x = 0 + (mFrog.Position().x * TILE_SIZE);
+    dst.y = HEADER_HEIGHT + (mFrog.Position().y * TILE_SIZE);
     dst.h = TILE_SIZE;
     dst.w = TILE_SIZE;
 
     double angle = 0;
 
-    switch (mFrogger.Direction()) {
+    switch (mFrog.Direction()) {
         case (UP):
             angle = 0;
             break;
@@ -180,32 +180,32 @@ void Game::RenderFrog(int frame) {
             angle = 90;
     }
 
-    if (!mFrogger.IsMoving()) {
+    if (!mFrog.IsMoving()) {
 
         SDL_RenderTextureRotated(renderer, textureSpriteSheet, &mPortion, &dst, angle, 
                 NULL, SDL_FLIP_NONE);
     }
 
     else {
-        mFrame = mFrogger.movingFrame + 1;
-        mFrogger.movingFrame = mFrame;
+        mFrame = mFrog.movingFrame + 1;
+        mFrog.movingFrame = mFrame;
         mPortion.x = 0 + mFrame*16;
 
-        if (mFrogger.Direction() == UP) {
-            dst.x = 0 + (mFrogger.PrevPosition().x * TILE_SIZE);
-            dst.y = HEADER_HEIGHT + (mFrogger.PrevPosition().y * TILE_SIZE) - (mFrame*(16));
+        if (mFrog.Direction() == UP) {
+            dst.x = 0 + (mFrog.PrevPosition().x * TILE_SIZE);
+            dst.y = HEADER_HEIGHT + (mFrog.PrevPosition().y * TILE_SIZE) - (mFrame*(16));
         }
-        else if (mFrogger.Direction() == DOWN) {
-            dst.x = 0 + (mFrogger.PrevPosition().x * TILE_SIZE);
-            dst.y = HEADER_HEIGHT + (mFrogger.PrevPosition().y * TILE_SIZE) + (mFrame*(16));
+        else if (mFrog.Direction() == DOWN) {
+            dst.x = 0 + (mFrog.PrevPosition().x * TILE_SIZE);
+            dst.y = HEADER_HEIGHT + (mFrog.PrevPosition().y * TILE_SIZE) + (mFrame*(16));
         }
-        else if (mFrogger.Direction() == RIGHT) {
-            dst.x = 0 + (mFrogger.PrevPosition().x * TILE_SIZE) + (mFrame*(16));
-            dst.y = HEADER_HEIGHT + (mFrogger.PrevPosition().y * TILE_SIZE);
+        else if (mFrog.Direction() == RIGHT) {
+            dst.x = 0 + (mFrog.PrevPosition().x * TILE_SIZE) + (mFrame*(16));
+            dst.y = HEADER_HEIGHT + (mFrog.PrevPosition().y * TILE_SIZE);
         }
-        else if (mFrogger.Direction() == LEFT) {
-            dst.x = 0 + (mFrogger.PrevPosition().x * TILE_SIZE) - (mFrame*(16));
-            dst.y = HEADER_HEIGHT + (mFrogger.PrevPosition().y * TILE_SIZE);
+        else if (mFrog.Direction() == LEFT) {
+            dst.x = 0 + (mFrog.PrevPosition().x * TILE_SIZE) - (mFrame*(16));
+            dst.y = HEADER_HEIGHT + (mFrog.PrevPosition().y * TILE_SIZE);
         }
 
 
@@ -213,8 +213,8 @@ void Game::RenderFrog(int frame) {
                 NULL, SDL_FLIP_NONE);
 
         if (mFrame == 3) {
-            mFrogger.movingFrame = 0;
-            mFrogger.SetIsMoving(false);
+            mFrog.movingFrame = 0;
+            mFrog.SetIsMoving(false);
 
         }
     }
@@ -390,19 +390,19 @@ SDL_AppResult Game::handleAppEvent(void *, SDL_Event *event) {
                     break;
                 case SDL_SCANCODE_W:
                 case SDL_SCANCODE_UP:
-                    mFrogger.Move(UP);
+                    mFrog.Move(UP);
                     break;
                 case SDL_SCANCODE_S:
                 case SDL_SCANCODE_DOWN:
-                    mFrogger.Move(DOWN);
+                    mFrog.Move(DOWN);
                     break;
                 case SDL_SCANCODE_A:
                 case SDL_SCANCODE_LEFT:
-                    mFrogger.Move(LEFT);
+                    mFrog.Move(LEFT);
                     break;
                 case SDL_SCANCODE_D:
                 case SDL_SCANCODE_RIGHT:
-                    mFrogger.Move(RIGHT);
+                    mFrog.Move(RIGHT);
                     break;
                 case SDL_SCANCODE_E:
                     resetGame();
@@ -427,7 +427,7 @@ SDL_AppResult Game::Iterate(void *) {
     SDL_SetRenderDrawColor(renderer, 0, 0, 0, SDL_ALPHA_OPAQUE);
     SDL_RenderClear(renderer);
 
-    RenderFrog(0);
+    RenderFrog();
 
     if (isPaused) {
         ShowPaused();
@@ -440,7 +440,7 @@ SDL_AppResult Game::Iterate(void *) {
 
     SDL_RenderPresent(renderer);
 
-    if(mFrogger.Size() >= 200) {
+    if(mFrog.Size() >= 200) {
         printf("You won!\n");
         resetGame();
     }

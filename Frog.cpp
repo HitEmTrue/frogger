@@ -12,15 +12,15 @@
 
 using namespace std;
 
-#include "Frogger.h"
+#include "Frog.h"
+
 #include "Game.h"
 
-Frogger::Frogger(Game& game) 
+Frog::Frog(Game& game) 
     : size(0),
     direction(UP),
     capacity(0),
     isMoving(false),
-    movingFrame(0),
     movingSteps(4),
     mGame(game)
 {
@@ -28,51 +28,51 @@ Frogger::Frogger(Game& game)
     position.y = 12;
     prevPosition.x = 0;
     prevPosition.y = 0;
+    movingFrame = 0;
 }
 
-Frogger::~Frogger() {
+Frog::~Frog() {
 //    free(segments);
 }
 
-
-void Frogger::Reset(SDL_Point point) {
+void Frog::Reset() {
     size = 0;
     direction = UP;
 }
 
-SDL_Point Frogger::Position() {
+SDL_Point Frog::Position() {
     return position;
 }
 
-SDL_Point Frogger::PrevPosition() {
+SDL_Point Frog::PrevPosition() {
     return prevPosition;
 }
 
-bool Frogger::IsMoving() {
+bool Frog::IsMoving() {
     return isMoving;
 }
 
-void Frogger::SetIsMoving(bool mIsMoving) {
+void Frog::SetIsMoving(bool mIsMoving) {
     isMoving = mIsMoving;
 }
 
-int Frogger::MovingFrame() {
+int Frog::MovingFrame() {
     return movingFrame;
 }
 
-int Frogger::MovingSteps() {
+int Frog::MovingSteps() {
     return movingSteps;
 }
 
-int Frogger::Direction() {
+int Frog::Direction() {
     return direction;
 }
 
-size_t Frogger::Size() {
+size_t Frog::Size() {
     return size;
 }
 
-void Frogger::Move(int mDirection) {
+void Frog::Move(int mDirection) {
 
     prevPosition.x = position.x;
     prevPosition.y = position.y;
@@ -113,8 +113,8 @@ void Frogger::Move(int mDirection) {
     // printf("%s",debug.c_str());
 }
 
-bool Frogger::ContainsPoint(SDL_Point point ) {
-    bool rValue = false;
-    return rValue;
-}
-
+// bool Frogger::ContainsPoint(SDL_Point point ) {
+//     bool rValue = false;
+//     return rValue;
+// }
+//
