@@ -390,19 +390,23 @@ SDL_AppResult Game::handleAppEvent(void *, SDL_Event *event) {
                     break;
                 case SDL_SCANCODE_W:
                 case SDL_SCANCODE_UP:
-                    mFrog.Move(UP);
+                    if (!mFrog.IsMoving() && !event->key.repeat)
+                       mFrog.Move(UP);
                     break;
                 case SDL_SCANCODE_S:
                 case SDL_SCANCODE_DOWN:
-                    mFrog.Move(DOWN);
+                    if (!mFrog.IsMoving() && !event->key.repeat)
+                        mFrog.Move(DOWN);
                     break;
                 case SDL_SCANCODE_A:
                 case SDL_SCANCODE_LEFT:
-                    mFrog.Move(LEFT);
+                    if (!mFrog.IsMoving() && !event->key.repeat)
+                        mFrog.Move(LEFT);
                     break;
                 case SDL_SCANCODE_D:
                 case SDL_SCANCODE_RIGHT:
-                    mFrog.Move(RIGHT);
+                    if (!mFrog.IsMoving() && !event->key.repeat)
+                        mFrog.Move(RIGHT);
                     break;
                 case SDL_SCANCODE_E:
                     resetGame();

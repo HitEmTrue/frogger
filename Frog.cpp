@@ -76,27 +76,30 @@ void Frog::Move(int mDirection) {
 
     prevPosition.x = position.x;
     prevPosition.y = position.y;
-    isMoving = true;
 
     switch (mDirection) {
         case (UP):
             if (position.y > 0) {
                 position.y--;
+                isMoving = true;
             }
             break;
         case (DOWN):
             if (position.y < 12) {
                 position.y++;
+                isMoving = true;
             }
             break;
         case (RIGHT):
             if (position.x < 13) {
                 position.x++;
+                isMoving = true;
             }
             break;
         case (LEFT):
             if (position.x > 0) {
                 position.x--;
+                isMoving = true;
             }
             break;
         default:
