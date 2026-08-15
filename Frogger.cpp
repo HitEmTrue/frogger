@@ -19,7 +19,9 @@ Frogger::Frogger(Game& game)
     : size(0),
     direction(UP),
     capacity(0),
-    isMoved(false),
+    isMoving(false),
+    movingFrame(0),
+    movingSteps(4),
     mGame(game)
 {
     position.x = 6;
@@ -43,11 +45,23 @@ SDL_Point Frogger::Position() {
 }
 
 SDL_Point Frogger::PrevPosition() {
-    return position;
+    return prevPosition;
 }
 
-bool Frogger::IsMoved() {
-    return isMoved;
+bool Frogger::IsMoving() {
+    return isMoving;
+}
+
+void Frogger::SetIsMoving(bool mIsMoving) {
+    isMoving = mIsMoving;
+}
+
+int Frogger::MovingFrame() {
+    return movingFrame;
+}
+
+int Frogger::MovingSteps() {
+    return movingSteps;
 }
 
 int Frogger::Direction() {
@@ -60,7 +74,9 @@ size_t Frogger::Size() {
 
 void Frogger::Move(int mDirection) {
 
-    prevPosition = position;
+    prevPosition.x = position.x;
+    prevPosition.y = position.y;
+    isMoving = true;
 
     switch (mDirection) {
         case (UP):
@@ -88,6 +104,13 @@ void Frogger::Move(int mDirection) {
     }
 
     direction = mDirection;
+
+    // std::string debug = std::format("Frog.Move() x: {} y: {} \n",
+    //         Position().x, Position().y);
+    // printf("%s",debug.c_str());
+    // debug = std::format("Move() PrevX: {} PrevY: {}\n",
+    //         PrevPosition().x, PrevPosition().y);
+    // printf("%s",debug.c_str());
 }
 
 bool Frogger::ContainsPoint(SDL_Point point ) {

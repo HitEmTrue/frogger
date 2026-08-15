@@ -35,7 +35,6 @@ Game::~Game() {
 void Game::resetGame() {
     score = 0;
     mFood.Reset();
-    for(int f = 0; f < (rand() % 4) + 3; f++) mFood.addToFood(randomTile());
 
     mFrogger.Reset(randomTile());
 }
@@ -49,24 +48,6 @@ void Game::handleGameLost() {
     }
 }
 
-void Game::replaceFood(size_t foodIndex) {
-
-    bool foodLocationFound = false;
-    SDL_Point potentialFood;
-
-    while (!foodLocationFound) {
-
-        potentialFood = randomTile();
-
-        if (mFood.ContainsPoint(potentialFood) >= 0) {
-            printf("food double prevented\n");
-            continue;
-        }
-
-    }
-
-    mFood.foodStorage[foodIndex] = potentialFood;
-}
 
 void Game::ComposeScoreboardText() {
 
@@ -162,9 +143,12 @@ void Game::RenderFrog(int frame) {
 
     //TODO check bounds on frame
 
-    std::string debug = std::format("Frog x: {} y: {} HEADER_HEIGHT: {}\n",
-            mFrogger.Position().x, mFrogger.Position().y, HEADER_HEIGHT);
-    printf("%s",debug.c_str());
+    // std::string debug = std::format("Frog x: {} y: {} HEADER_HEIGHT: {}\n",
+    //         mFrogger.Position().x, mFrogger.Position().y, HEADER_HEIGHT);
+    // printf("%s",debug.c_str());
+    // debug = std::format(" PrevX: {} PrevY: {}\n",
+    //         mFrogger.PrevPosition().x, mFrogger.PrevPosition().y);
+    // printf("%s",debug.c_str());
 
     int mFrame = 0;
 
@@ -196,45 +180,49 @@ void Game::RenderFrog(int frame) {
             angle = 90;
     }
 
-    if (!mFrogger.IsMoved()) {
+    if (!mFrogger.IsMoving()) {
 
         SDL_RenderTextureRotated(renderer, textureSpriteSheet, &mPortion, &dst, angle, 
                 NULL, SDL_FLIP_NONE);
-        SDL_Delay(100);
     }
+
     else {
-        mFrame = 2;
+        mFrame = mFrogger.movingFrame + 1;
+        mFrogger.movingFrame = mFrame;
         mPortion.x = 0 + mFrame*16;
 
-        dst.x = 0 + (mFrogger.PrevPosition().x * TILE_SIZE);
-        dst.y = HEADER_HEIGHT + (mFrogger.PrevPosition().y * TILE_SIZE);
-        
+        if (mFrogger.Direction() == UP) {
+            dst.x = 0 + (mFrogger.PrevPosition().x * TILE_SIZE);
+            dst.y = HEADER_HEIGHT + (mFrogger.PrevPosition().y * TILE_SIZE) - (mFrame*(16));
+        }
+        else if (mFrogger.Direction() == DOWN) {
+            dst.x = 0 + (mFrogger.PrevPosition().x * TILE_SIZE);
+            dst.y = HEADER_HEIGHT + (mFrogger.PrevPosition().y * TILE_SIZE) + (mFrame*(16));
+        }
+        else if (mFrogger.Direction() == RIGHT) {
+            dst.x = 0 + (mFrogger.PrevPosition().x * TILE_SIZE) + (mFrame*(16));
+            dst.y = HEADER_HEIGHT + (mFrogger.PrevPosition().y * TILE_SIZE);
+        }
+        else if (mFrogger.Direction() == LEFT) {
+            dst.x = 0 + (mFrogger.PrevPosition().x * TILE_SIZE) - (mFrame*(16));
+            dst.y = HEADER_HEIGHT + (mFrogger.PrevPosition().y * TILE_SIZE);
+        }
+
 
         SDL_RenderTextureRotated(renderer, textureSpriteSheet, &mPortion, &dst, angle, 
                 NULL, SDL_FLIP_NONE);
 
-        SDL_Delay( 100) ;
+        if (mFrame == 3) {
+            mFrogger.movingFrame = 0;
+            mFrogger.SetIsMoving(false);
 
-        mFrame = 0;
-        mPortion.x = 0 + mFrame*16;
-
-        dst.x = 0 + (mFrogger.Position().x * TILE_SIZE);
-        dst.y = HEADER_HEIGHT + (mFrogger.Position().y * TILE_SIZE);
-
-        SDL_RenderTextureRotated(renderer, textureSpriteSheet, &mPortion, &dst, angle, 
-                NULL, SDL_FLIP_NONE);
-
-
+        }
     }
-
-    //    SDL_RenderTexture(renderer, textureSpriteSheet, &mPortion, &dst);
-
 
 }
 
 
-void Game::DrawCircle(int32_t game_x, int32_t game_y,
-                        bool filled, int32_t diameter)
+void Game::DrawCircle(int32_t game_x, int32_t game_y, bool filled, int32_t diameter)
 {
 
     int32_t centreX =  game_x*TILE_SIZE + TILE_SIZE/2;
@@ -370,11 +358,6 @@ SDL_AppResult Game::AppInit() {
         return SDL_APP_FAILURE;
     }
         
-    
-
-
-
-
     drawRect.w = drawRect.h = TILE_SIZE;
     srand(time(NULL));
 
@@ -444,35 +427,24 @@ SDL_AppResult Game::Iterate(void *) {
     SDL_SetRenderDrawColor(renderer, 0, 0, 0, SDL_ALPHA_OPAQUE);
     SDL_RenderClear(renderer);
 
-            // draw food
-            SDL_Point mTmp;
-            SDL_SetRenderDrawColor(renderer, 0, 255, 0, SDL_ALPHA_OPAQUE);
-            for(size_t i = 0; i < mFood.Size(); i++) {
-                mTmp = mFood.FoodStorage(i);
-                drawRect.x = mTmp.x * TILE_SIZE;
-                drawRect.y = mTmp.y * TILE_SIZE;
-                SDL_RenderFillRect(renderer, &drawRect);
-            }
+    RenderFrog(0);
 
-            RenderFrog(3);
+    if (isPaused) {
+        ShowPaused();
+    }
+    if (isGameLost) {
+        ShowYouLost();
+    }
 
-            if (isPaused) {
-                ShowPaused();
-            }
-           if (isGameLost) {
-                ShowYouLost();
-            }
+    //            RenderScoreboard();
 
-//            RenderScoreboard();
+    SDL_RenderPresent(renderer);
 
-            SDL_RenderPresent(renderer);
-
-            // if(mSnake.Size() >= (WINDOW_WIDTH / TILE_SIZE) * (WINDOW_HEIGHT / TILE_SIZE)) {
-            if(mFrogger.Size() >= 200) {
-                printf("You won!\n");
-                resetGame();
-            }
-            SDL_Delay(50);
-            return SDL_APP_CONTINUE;
+    if(mFrogger.Size() >= 200) {
+        printf("You won!\n");
+        resetGame();
+    }
+    SDL_Delay(50);
+    return SDL_APP_CONTINUE;
 }
 
