@@ -18,6 +18,8 @@ class Frogger {
     int direction;
     size_t capacity;
     SDL_Point position;
+    bool isMoved;
+    SDL_Point prevPosition;
     Game& mGame;
 
     public:
@@ -27,10 +29,13 @@ class Frogger {
 
         void Reset(SDL_Point point); 
         
-
         SDL_Point Position();
 
-        int GetDirection();
+        SDL_Point PrevPosition();
+
+        bool IsMoved();
+
+        int Direction();
 
         size_t Size();
 

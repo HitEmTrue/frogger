@@ -166,13 +166,13 @@ void Game::RenderFrog(int frame) {
             mFrogger.Position().x, mFrogger.Position().y, HEADER_HEIGHT);
     printf("%s",debug.c_str());
 
+    int mFrame = 0;
+
     SDL_FRect mPortion;
-    mPortion.x = 0 + frame*16;
+    mPortion.x = 0 + mFrame*16;
     mPortion.y = 0;
     mPortion.h = 16;
     mPortion.w = 16;
-
-//    const float scale = 4.0f;
 
     SDL_FRect dst;
     dst.x = 0 + (mFrogger.Position().x * TILE_SIZE);
@@ -180,8 +180,55 @@ void Game::RenderFrog(int frame) {
     dst.h = TILE_SIZE;
     dst.w = TILE_SIZE;
 
-    SDL_RenderTexture(renderer, textureSpriteSheet, &mPortion, &dst);
-    
+    double angle = 0;
+
+    switch (mFrogger.Direction()) {
+        case (UP):
+            angle = 0;
+            break;
+        case (DOWN):
+            angle = 180;
+            break;
+        case (LEFT):
+            angle = 270;
+            break;
+        case (RIGHT):
+            angle = 90;
+    }
+
+    if (!mFrogger.IsMoved()) {
+
+        SDL_RenderTextureRotated(renderer, textureSpriteSheet, &mPortion, &dst, angle, 
+                NULL, SDL_FLIP_NONE);
+        SDL_Delay(100);
+    }
+    else {
+        mFrame = 2;
+        mPortion.x = 0 + mFrame*16;
+
+        dst.x = 0 + (mFrogger.PrevPosition().x * TILE_SIZE);
+        dst.y = HEADER_HEIGHT + (mFrogger.PrevPosition().y * TILE_SIZE);
+        
+
+        SDL_RenderTextureRotated(renderer, textureSpriteSheet, &mPortion, &dst, angle, 
+                NULL, SDL_FLIP_NONE);
+
+        SDL_Delay( 100) ;
+
+        mFrame = 0;
+        mPortion.x = 0 + mFrame*16;
+
+        dst.x = 0 + (mFrogger.Position().x * TILE_SIZE);
+        dst.y = HEADER_HEIGHT + (mFrogger.Position().y * TILE_SIZE);
+
+        SDL_RenderTextureRotated(renderer, textureSpriteSheet, &mPortion, &dst, angle, 
+                NULL, SDL_FLIP_NONE);
+
+
+    }
+
+    //    SDL_RenderTexture(renderer, textureSpriteSheet, &mPortion, &dst);
+
 
 }
 

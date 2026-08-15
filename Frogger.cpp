@@ -17,12 +17,15 @@ using namespace std;
 
 Frogger::Frogger(Game& game) 
     : size(0),
-    direction(1),
+    direction(UP),
     capacity(0),
+    isMoved(false),
     mGame(game)
 {
     position.x = 6;
     position.y = 12;
+    prevPosition.x = 0;
+    prevPosition.y = 0;
 }
 
 Frogger::~Frogger() {
@@ -32,15 +35,22 @@ Frogger::~Frogger() {
 
 void Frogger::Reset(SDL_Point point) {
     size = 0;
-    direction = rand()%4;
+    direction = UP;
 }
 
 SDL_Point Frogger::Position() {
     return position;
 }
 
+SDL_Point Frogger::PrevPosition() {
+    return position;
+}
 
-int Frogger::GetDirection() {
+bool Frogger::IsMoved() {
+    return isMoved;
+}
+
+int Frogger::Direction() {
     return direction;
 }
 
@@ -49,6 +59,9 @@ size_t Frogger::Size() {
 }
 
 void Frogger::Move(int mDirection) {
+
+    prevPosition = position;
+
     switch (mDirection) {
         case (UP):
             if (position.y > 0) {
